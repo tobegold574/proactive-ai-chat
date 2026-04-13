@@ -1,0 +1,6 @@
+export const STORAGE_KEY_MESSAGES = "proactive-chat-messages"
+export const STORAGE_KEY_CONFIG = "proactive-chat-config"
+export const STORAGE_KEY_USAGE = "proactive-chat-usage"
+export const STORAGE_KEY_IMPORTANT = "proactive-chat-important"
+export const STORAGE_KEY_MODE = "proactive-chat-mode"
+export const STORAGE_KEY_TRIGGER = "proactive-chat-trigger"
