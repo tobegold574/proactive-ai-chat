@@ -26,7 +26,6 @@ const WINDOWS_DESKTOP_RELEASE_URL =
 export default function Home() {
   const router = useRouter()
   const t = useTranslations("Home")
-  const tNav = useTranslations("Nav")
   const tCommon = useTranslations("common")
   const featuresRef = useRef(null)
   const stepsRef = useRef(null)
@@ -40,69 +39,40 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-xl"
+      <motion.div
+        initial={{ y: -24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.35 }}
+        className="fixed top-4 left-0 right-0 z-50 px-4"
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <BrandIcon size={36} priority className="shrink-0" alt={tCommon("brandAlt")} />
-            <span className="text-lg font-bold text-slate-800 truncate">{t("brand")}</span>
-          </div>
-          <div className="hidden md:flex items-center gap-6 flex-1 justify-end">
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <a
-                href="#features"
-                className="text-sm text-slate-600 hover:text-slate-900 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.querySelector("#features")?.scrollIntoView({ behavior: "smooth" })
-                }}
-              >
-                {tNav("features")}
-              </a>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <a
-                href="#how-it-works"
-                className="text-sm text-slate-600 hover:text-slate-900 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.querySelector("#how-it-works")?.scrollIntoView({ behavior: "smooth" })
-                }}
-              >
-                {tNav("howItWorks")}
-              </a>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <a
-                href="#download"
-                className="text-sm text-slate-600 hover:text-slate-900 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.querySelector("#download")?.scrollIntoView({ behavior: "smooth" })
-                }}
-              >
-                {tNav("download")}
-              </a>
-            </motion.div>
-            <LocaleSwitcher />
-            <motion.div>
-              <Button size="sm" onClick={() => router.push("/chat")} className="cursor-pointer">
-                {tNav("getStarted")}
-              </Button>
-            </motion.div>
-          </div>
-          <div className="flex md:hidden items-center gap-2 shrink-0">
-            <LocaleSwitcher />
-            <Button size="sm" onClick={() => router.push("/chat")} className="cursor-pointer">
-              {tNav("getStarted")}
+        <div className="mx-auto w-fit max-w-[92vw]">
+          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white/60 px-3 py-2 shadow-lg shadow-black/5 backdrop-blur-xl">
+            <div className="flex items-center gap-2 pr-1">
+              <BrandIcon size={28} priority className="shrink-0" alt={tCommon("brandAlt")} />
+              <span className="text-sm font-semibold text-slate-800">{t("brand")}</span>
+            </div>
+            <div className="h-6 w-px bg-slate-200/80" aria-hidden />
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 rounded-full bg-white/70 hover:bg-white"
+              onClick={() => window.open(WINDOWS_DESKTOP_RELEASE_URL, "_blank", "noopener,noreferrer")}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {t("download")}
             </Button>
+            <Button
+              size="sm"
+              className="h-9 rounded-full"
+              onClick={() => router.push("/chat")}
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {t("getStarted")}
+            </Button>
+            <LocaleSwitcher />
           </div>
         </div>
-      </motion.nav>
+      </motion.div>
 
       <section className="pt-32 pb-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
