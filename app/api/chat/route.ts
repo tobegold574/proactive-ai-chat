@@ -44,8 +44,18 @@ async function compressImportantInfo(
     response_format: { type: "json_object" },
   })
 
-  const result = JSON.parse(response.choices[0]?.message?.content || "{}")
-  return result.compressed_summary || infos.join("; ")
+  const raw = response.choices[0]?.message?.content || "{}"
+  let summary: string | undefined
+  try {
+    const parsed = JSON.parse(raw) as { compressed_summary?: unknown }
+    summary =
+      typeof parsed.compressed_summary === "string"
+        ? parsed.compressed_summary
+        : undefined
+  } catch {
+    summary = undefined
+  }
+  return summary || infos.join("; ")
 }
 
 function deduplicateImportantInfo(
