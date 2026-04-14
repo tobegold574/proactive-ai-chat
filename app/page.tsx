@@ -12,30 +12,82 @@ import {
   MessageCircle,
   Download,
   Star,
+  Github,
   ExternalLink,
 } from "lucide-react"
 import { BrandIcon } from "@/components/brand-icon"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { features, steps } from "@/config/content"
 import { fadeInUp, fadeInLeft, fadeInRight } from "@/config/animations"
-import { WINDOWS_DESKTOP_RELEASE_URL } from "@/lib/site-config"
+
+const WINDOWS_DESKTOP_RELEASE_URL =
+  "https://github.com/tobegold574/proactive-ai-desktop/releases/tag/v1.0.0"
 
 export default function Home() {
   const router = useRouter()
   const featuresRef = useRef(null)
   const stepsRef = useRef(null)
+  const downloadRef = useRef(null)
   const ctaRef = useRef(null)
 
   const featuresInView = useInView(featuresRef, { once: true, margin: "-100px" })
   const stepsInView = useInView(stepsRef, { once: true, margin: "-100px" })
+  const downloadInView = useInView(downloadRef, { once: true, margin: "-100px" })
   const ctaInView = useInView(ctaRef, { once: true, margin: "-100px" })
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <SiteHeader />
+    <div className="min-h-screen bg-slate-50">
+      <motion.nav 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-xl"
+      >
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <BrandIcon size={36} priority className="shrink-0" />
+            <span className="text-lg font-bold text-slate-800">Proactive AI</span>
+          </div>
+          <div className="hidden md:flex items-center gap-8">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+            >
+              <Link href="#features" className="text-sm text-slate-600 hover:text-slate-900 transition-colors" scroll={false} onClick={(e) => {
+                e.preventDefault();
+                document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' });
+              }}>
+                特性
+              </Link>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+            >
+              <Link href="#how-it-works" className="text-sm text-slate-600 hover:text-slate-900 transition-colors" scroll={false} onClick={(e) => {
+                e.preventDefault();
+                document.querySelector('#how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+              }}>
+                原理
+              </Link>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+            >
+              <Link href="#download" className="text-sm text-slate-600 hover:text-slate-900 transition-colors" scroll={false} onClick={(e) => {
+                e.preventDefault();
+                document.querySelector('#download')?.scrollIntoView({ behavior: 'smooth' });
+              }}>
+                下载
+              </Link>
+            </motion.div>
+            <motion.div>
+              <Button size="sm" onClick={() => router.push("/chat")} className="cursor-pointer">
+                开始使用
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </motion.nav>
 
-      <section className="pt-24 md:pt-28 pb-24 px-6">
+      <section className="pt-32 pb-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -84,28 +136,15 @@ export default function Home() {
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="secondary" size="lg" asChild>
-                <Link href="/download">
-                  <Download className="w-4 h-4 mr-2" />
-                  下载客户端
-                </Link>
+              <Button variant="secondary" size="lg" onClick={(e) => {
+                e.preventDefault();
+                document.querySelector('#download')?.scrollIntoView({ behavior: 'smooth' });
+              }}>
+                <Download className="w-4 h-4 mr-2" />
+                下载客户端
               </Button>
             </motion.div>
           </motion.div>
-          <motion.p
-            initial="hidden"
-            animate="visible"
-            variants={fadeInUp}
-            transition={{ delay: 0.4 }}
-            className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-500"
-          >
-            <Link href="/community" className="text-blue-600 hover:text-blue-700 font-medium hover:underline underline-offset-4">
-              社区与桌面联动
-            </Link>
-            <Link href="/plugins" className="text-blue-600 hover:text-blue-700 font-medium hover:underline underline-offset-4">
-              插件市场
-            </Link>
-          </motion.p>
         </div>
       </section>
 
@@ -194,7 +233,83 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 下载入口已拆分为独立页面：/download */}
+      <section ref={downloadRef} id="download" className="py-24 px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div 
+            initial="hidden"
+            animate={downloadInView ? "visible" : "hidden"}
+            variants={fadeInUp}
+            className="mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
+              下载 <span className="text-blue-500">客户端</span>
+            </h2>
+            <p className="text-slate-600">
+              本地运行更安全，完全掌控你的 API Key
+            </p>
+          </motion.div>
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <motion.div
+              initial="hidden"
+              animate={downloadInView ? "visible" : "hidden"}
+              variants={fadeInUp}
+              transition={{ delay: 0 }}
+              whileHover={{ scale: 1.02, y: -4 }}
+            >
+              <Card className="group h-full text-left">
+                <CardContent className="p-8 pt-8 h-full flex flex-col">
+                  <motion.div
+                    whileHover={{ scale: 1.2 }}
+                    className="text-5xl mb-4"
+                  >
+                    🖥️
+                  </motion.div>
+                  <h3 className="text-xl font-semibold mb-2 text-slate-900 group-hover:text-blue-500 transition-colors">
+                    桌面客户端
+                  </h3>
+                  <p className="text-sm text-slate-500 mb-4 flex-1">
+                    Windows 版已发布；macOS / Linux 敬请期待
+                  </p>
+                  <Button asChild className="w-full cursor-pointer">
+                    <a
+                      href={WINDOWS_DESKTOP_RELEASE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      下载 Windows 版
+                      <ExternalLink className="w-4 h-4 ml-2 opacity-70" />
+                    </a>
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div
+              initial="hidden"
+              animate={downloadInView ? "visible" : "hidden"}
+              variants={fadeInUp}
+              transition={{ delay: 0.1 }}
+              whileHover={{ scale: 1.02, y: -4 }}
+            >
+              <Card className="group cursor-pointer h-full text-left">
+                <CardContent className="p-8 pt-8 h-full">
+                  <motion.div
+                    whileHover={{ scale: 1.2 }}
+                    className="text-5xl mb-4"
+                  >
+                    ⌨️
+                  </motion.div>
+                  <h3 className="text-xl font-semibold mb-2 text-slate-900 group-hover:text-blue-500 transition-colors">
+                    TUI 终端
+                  </h3>
+                  <p className="text-sm text-slate-500 mb-4">极客首选 • 轻量快速</p>
+                  <Badge variant="secondary">即将推出</Badge>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       <section ref={ctaRef} className="py-24 px-6 bg-gradient-to-b from-white to-blue-50">
         <div className="max-w-2xl mx-auto text-center">
@@ -217,7 +332,29 @@ export default function Home() {
         </div>
       </section>
 
-      <SiteFooter />
+      <footer className="py-8 px-6 border-t border-slate-200 bg-white">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2 text-slate-500">
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <BrandIcon size={20} />
+            </motion.div>
+            <span className="font-medium text-slate-700">Proactive AI Chat</span>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-slate-400">
+            <motion.a
+              href="https://github.com/tobegold574/proactive-ai-chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-slate-700 transition-colors flex items-center gap-1"
+              whileHover={{ scale: 1.1 }}
+            >
+              <Github className="w-4 h-4" />
+              GitHub
+            </motion.a>
+            <span>© 2026 Proactive AI</span>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
