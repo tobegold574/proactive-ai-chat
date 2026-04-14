@@ -2,6 +2,87 @@ import OpenAI from "openai"
 import { SYSTEM_PROMPT, DEFAULT_BASE_URL } from "./config"
 import type { ChatMessage, ChatResponse, UserSettings } from "./types"
 
+const DEFAULT_INTERVAL = 60
+
+function parseModelContentToChatResponse(
+  resultText: string,
+  fallbackInterval: number
+): ChatResponse {
+  const fallback = (): ChatResponse => ({
+    reply: resultText,
+    triggers: [],
+    next_api_call_seconds: fallbackInterval,
+    important_info: [],
+  })
+
+  const tryParseJson = (text: string): unknown => {
+    try {
+      return JSON.parse(text)
+    } catch {
+      /* ignore */
+    }
+    const start = text.indexOf("{")
+    const end = text.lastIndexOf("}")
+    if (start === -1 || end === -1 || end <= start) return null
+    try {
+      return JSON.parse(text.slice(start, end + 1))
+    } catch {
+      return null
+    }
+  }
+
+  const raw = tryParseJson(resultText)
+  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
+    return fallback()
+  }
+
+  const o = raw as Record<string, unknown>
+
+  let reply = ""
+  if (typeof o.reply === "string") {
+    reply = o.reply
+  } else if (o.reply != null) {
+    reply = String(o.reply)
+  }
+
+  const triggers: ChatResponse["triggers"] = []
+  if (Array.isArray(o.triggers)) {
+    for (const t of o.triggers) {
+      if (
+        t !== null &&
+        typeof t === "object" &&
+        !Array.isArray(t) &&
+        typeof (t as { seconds?: unknown }).seconds === "number" &&
+        typeof (t as { message?: unknown }).message === "string"
+      ) {
+        triggers.push({
+          seconds: (t as { seconds: number }).seconds,
+          message: (t as { message: string }).message,
+        })
+      }
+    }
+  }
+
+  const important_info = Array.isArray(o.important_info)
+    ? o.important_info.filter((x): x is string => typeof x === "string")
+    : []
+
+  const nextRaw = o.next_api_call_seconds
+  const next_api_call_seconds =
+    typeof nextRaw === "number" &&
+    Number.isFinite(nextRaw) &&
+    nextRaw > 0
+      ? Math.floor(nextRaw)
+      : fallbackInterval
+
+  return {
+    reply,
+    triggers,
+    next_api_call_seconds,
+    important_info,
+  }
+}
+
 function buildMessages(
   systemPrompt: string,
   history: ChatMessage[],
@@ -75,13 +156,7 @@ export async function callAI(
     resultText = resultText.substring(0, resultText.length - 3)
   }
   resultText = resultText.trim()
-  
-  const result = JSON.parse(resultText)
 
-  return {
-    reply: result.reply || "",
-    triggers: result.triggers || [],
-    next_api_call_seconds: result.next_api_call_seconds || settings?.proactiveInterval || 60,
-    important_info: result.important_info || [],
-  }
+  const interval = settings?.proactiveInterval ?? DEFAULT_INTERVAL
+  return parseModelContentToChatResponse(resultText, interval)
 }
