@@ -1,21 +1,24 @@
 import OpenAI from "openai"
-import { SYSTEM_PROMPT, DEFAULT_BASE_URL } from "./config"
+import { DEFAULT_BASE_URL } from "./config"
+import { getSystemPrompt, type PromptLocale } from "./prompts"
 import type { ChatMessage, ChatResponse, UserSettings } from "./types"
 
 function buildMessages(
   systemPrompt: string,
   history: ChatMessage[],
   importantInfo: string[],
-  recentMessagesCount: number = 3
+  recentMessagesCount: number = 3,
+  locale: PromptLocale = "zh"
 ) {
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = []
 
   messages.push({ role: "system", content: systemPrompt })
 
   if (importantInfo.length > 0) {
+    const tag = locale === "en" ? "[User important notes]" : "[用户重要信息]"
     messages.push({
       role: "system",
-      content: `[用户重要信息] ${importantInfo.join("; ")}`,
+      content: `${tag} ${importantInfo.join("; ")}`,
     })
   }
 
@@ -37,7 +40,8 @@ export async function callAI(
   apiKey: string,
   modelId: string,
   baseURL: string = DEFAULT_BASE_URL,
-  settings?: UserSettings
+  settings?: UserSettings,
+  locale: PromptLocale = "zh"
 ): Promise<ChatResponse> {
   const client = new OpenAI({
     apiKey,
@@ -46,14 +50,15 @@ export async function callAI(
 
   const systemPrompt = (settings?.systemPrompt && settings.systemPrompt.trim()) 
     ? settings.systemPrompt 
-    : SYSTEM_PROMPT
+    : getSystemPrompt(locale)
   const recentMessagesCount = settings?.recentMessagesCount || 3
 
   const messages = buildMessages(
     systemPrompt, 
     history, 
     importantInfo,
-    recentMessagesCount
+    recentMessagesCount,
+    locale
   )
   messages.push({ role: "user", content: userMessage })
 

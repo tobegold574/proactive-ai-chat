@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "root": {
+      "title": "Proactive AI Chat | Proactive dialogue AI",
+      "description": "Next-gen chat—AI reaches out, remembers your preferences"
+    },
+    "chat": {
+      "title": "Chat | Proactive AI",
+      "description": "Chat with proactive AI"
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "back": "Back to home"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "zh": "中文",
+    "en": "English"
+  },
+  "Nav": {
+    "features": "Features",
+    "howItWorks": "How it works",
+    "download": "Download",
+    "getStarted": "Get started"
+  },
+  "Home": {
+    "brand": "Proactive AI",
+    "badge": "Open source • Proactive AI chat",
+    "heroTitleBefore": "More than",
+    "heroHighlight": "one question, one answer",
+    "heroSub": "A new kind of AI chat. It checks in, remembers what matters, and starts conversations at the right time—like a thoughtful friend.",
+    "tryNow": "Try it now",
+    "downloadClient": "Download app",
+    "sectionFeaturesTitle": "A different kind of",
+    "sectionFeaturesAccent": "AI chat",
+    "sectionFeaturesSub": "Rethinking how we talk to machines",
+    "sectionStepsTitle": "How it",
+    "sectionStepsAccent": "works",
+    "sectionStepsSub": "Two steps to proactive AI chat",
+    "sectionDownloadTitle": "Download",
+    "sectionDownloadAccent": "the app",
+    "sectionDownloadSub": "Run locally and keep full control of your API key",
+    "desktopTitle": "Desktop",
+    "desktopDesc": "Windows is available; macOS / Linux coming soon",
+    "downloadWindows": "Download for Windows",
+    "tuiTitle": "TUI terminal",
+    "tuiDesc": "For CLI fans • fast and light",
+    "comingSoon": "Coming soon",
+    "ctaTitle": "Ready to try it?",
+    "ctaSub": "Start your proactive AI conversation",
+    "ctaButton": "Open chat",
+    "footerProduct": "Proactive AI Chat",
+    "footerCopyright": "© 2026 Proactive AI",
+    "features": {
+      "proactive": {
+        "title": "Proactive dialogue",
+        "description": "The AI doesn’t only reply—it reaches out, checks in, and chats like a real friend."
+      },
+      "memory": {
+        "title": "Smart memory",
+        "description": "Remembers preferences, habits, and what matters. Auto-compressed, efficient, no key detail lost."
+      },
+      "local": {
+        "title": "Runs locally",
+        "description": "Data stays on your device. Privacy first—no server; your API key never leaves your machine."
+      },
+      "trigger": {
+        "title": "Dual triggers",
+        "description": "Time-based and memory-based triggers help the AI start conversations at the right moment."
+      }
+    },
+    "steps": {
+      "start": {
+        "title": "Start chatting",
+        "description": "Open chat—the AI will engage with you proactively"
+      },
+      "customize": {
+        "title": "Configure",
+        "description": "Add your API key or tune settings"
+      }
+    }
+  },
+  "Chat": {
+    "brand": "Proactive AI",
+    "backHome": "Back to home",
+    "memoryCount": "{count} saved",
+    "memoryTitle": "Important memories",
+    "memoryEmpty": "No memories yet",
+    "deleteTitle": "Remove",
+    "clearAllMemory": "Clear all memories",
+    "freeQuota": "Free: {remaining}/{limit}",
+    "quotaExhausted": "Quota used",
+    "customMode": "Custom mode",
+    "settings": "Settings",
+    "quotaAlert": "Free quota is used up. Please enter your API key.",
+    "apiBaseUrl": "API base URL",
+    "modelName": "Model",
+    "modelPlaceholder": "e.g. deepseek-chat, gpt-4o",
+    "apiKey": "API key",
+    "apiKeyOptional": "(optional—uses default)",
+    "localOnly": "Everything stays in your browser",
+    "advanced": "Advanced",
+    "personaTemplate": "Persona template",
+    "importantThreshold": "Memory threshold: {value}",
+    "importantThresholdHint": "Auto-compress when above this count (10–100)",
+    "proactiveInterval": "Proactive interval (seconds)",
+    "proactiveIntervalHint": "Time before next proactive nudge (10–300s)",
+    "recentMessages": "Recent full messages: {value}",
+    "recentMessagesHint": "Keep last N messages in full (1–10)",
+    "proactiveEnabled": "Enable proactive triggers",
+    "systemPrompt": "System prompt",
+    "systemPromptPlaceholder": "Leave empty for default…",
+    "systemPromptHint": "Custom instructions; empty uses default",
+    "save": "Save",
+    "emptyTitle": "Start proactive AI chat",
+    "emptySub": "The AI will check in and remember your preferences. Send a message to begin.",
+    "inputPlaceholder": "Message…",
+    "countdownSeconds": "in {n}s",
+    "countdownMinutes": "in {m}m {n}s",
+    "errors": {
+      "freeExhausted": "Free quota is used up. Please enter your API key.",
+      "requestFailed": "Request failed",
+      "unknown": "Unknown error"
+    }
+  },
+  "common": {
+    "brandAlt": "Proactive AI"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "root": {
+      "title": "Proactive AI Chat | 主动对话AI",
+      "description": "下一代智能聊天体验 - AI会主动关心你，记得你的偏好"
+    },
+    "chat": {
+      "title": "聊天 | Proactive AI",
+      "description": "与主动 AI 对话"
+    }
+  },
+  "NotFound": {
+    "title": "页面未找到",
+    "back": "返回首页"
+  },
+  "LocaleSwitcher": {
+    "label": "语言",
+    "zh": "中文",
+    "en": "English"
+  },
+  "Nav": {
+    "features": "特性",
+    "howItWorks": "原理",
+    "download": "下载",
+    "getStarted": "开始使用"
+  },
+  "Home": {
+    "brand": "Proactive AI",
+    "badge": "开源免费 • 主动对话 AI",
+    "heroTitleBefore": "不是只会",
+    "heroHighlight": "问一句答一句",
+    "heroSub": "下一代 AI 对话体验。AI 会主动关心你，记得你的偏好，在合适的时机发起对话。就像一个真实的朋友。",
+    "tryNow": "立即体验",
+    "downloadClient": "下载客户端",
+    "sectionFeaturesTitle": "不一样的",
+    "sectionFeaturesAccent": "AI 对话",
+    "sectionFeaturesSub": "重新定义人机交互",
+    "sectionStepsTitle": "工作",
+    "sectionStepsAccent": "原理",
+    "sectionStepsSub": "两步开始你的主动 AI 对话",
+    "sectionDownloadTitle": "下载",
+    "sectionDownloadAccent": "客户端",
+    "sectionDownloadSub": "本地运行更安全，完全掌控你的 API Key",
+    "desktopTitle": "桌面客户端",
+    "desktopDesc": "Windows 版已发布；macOS / Linux 敬请期待",
+    "downloadWindows": "下载 Windows 版",
+    "tuiTitle": "TUI 终端",
+    "tuiDesc": "极客首选 • 轻量快速",
+    "comingSoon": "即将推出",
+    "ctaTitle": "准备好体验了吗？",
+    "ctaSub": "立即开始你的主动 AI 对话之旅",
+    "ctaButton": "开始体验",
+    "footerProduct": "Proactive AI Chat",
+    "footerCopyright": "© 2026 Proactive AI",
+    "features": {
+      "proactive": {
+        "title": "主动对话",
+        "description": "AI不再只是被动响应。它会主动关心你，在合适的时机发起对话，像真实的朋友一样。"
+      },
+      "memory": {
+        "title": "智能记忆",
+        "description": "强大的记忆系统记住你的偏好、习惯和重要事项。信息自动压缩，高效且不丢失关键。"
+      },
+      "local": {
+        "title": "本地运行",
+        "description": "所有数据本地处理，隐私优先。无需服务器，API Key 永不离开你的设备。"
+      },
+      "trigger": {
+        "title": "双层触发",
+        "description": "基于时间戳和重要信息双层触发机制，精准把握对话时机。"
+      }
+    },
+    "steps": {
+      "start": {
+        "title": "开始对话",
+        "description": "点击立即体验进入聊天，AI 会主动与你交流"
+      },
+      "customize": {
+        "title": "自定义配置",
+        "description": "在设置中配置你自己的 API Key 或调整参数"
+      }
+    }
+  },
+  "Chat": {
+    "brand": "Proactive AI",
+    "backHome": "返回首页",
+    "memoryCount": "{count} 条记忆",
+    "memoryTitle": "重要信息记忆",
+    "memoryEmpty": "暂无重要记忆",
+    "deleteTitle": "删除",
+    "clearAllMemory": "清空所有记忆",
+    "freeQuota": "免费: {remaining}/{limit} 次",
+    "quotaExhausted": "额度已用完",
+    "customMode": "自定义模式",
+    "settings": "设置",
+    "quotaAlert": "免费额度已用完，请输入自己的 API Key",
+    "apiBaseUrl": "API Base URL",
+    "modelName": "模型名称",
+    "modelPlaceholder": "deepseek-chat, gpt-4o 等",
+    "apiKey": "API Key",
+    "apiKeyOptional": "(可选，使用默认)",
+    "localOnly": "所有信息仅保存在浏览器本地",
+    "advanced": "高级配置",
+    "personaTemplate": "AI 人设模板",
+    "importantThreshold": "重要信息阈值: {value}",
+    "importantThresholdHint": "超过此数量自动压缩（10-100）",
+    "proactiveInterval": "预设触发间隔（秒）",
+    "proactiveIntervalHint": "下次主动触发的间隔（10-300秒）",
+    "recentMessages": "分层记忆数量: {value}",
+    "recentMessagesHint": "最近N条消息保留完整（1-10条）",
+    "proactiveEnabled": "启用主动触发",
+    "systemPrompt": "系统提示词模板",
+    "systemPromptPlaceholder": "留空使用默认提示词...",
+    "systemPromptHint": "自定义 AI 的行为指令，留空使用默认",
+    "save": "保存",
+    "emptyTitle": "开始你的主动 AI 对话",
+    "emptySub": "AI 会主动关心你，记得你的偏好。发送消息开始体验！",
+    "inputPlaceholder": "发送消息...",
+    "countdownSeconds": "{n}秒后",
+    "countdownMinutes": "{m}分{n}秒后",
+    "errors": {
+      "freeExhausted": "免费额度已用完，请输入自己的 API Key",
+      "requestFailed": "请求失败",
+      "unknown": "未知错误"
+    }
+  },
+  "common": {
+    "brandAlt": "Proactive AI"
+  }
+}

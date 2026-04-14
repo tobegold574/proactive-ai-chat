@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import OpenAI from "openai"
-import { DEFAULT_API_KEY, FREE_CONVERSATIONS, DEFAULT_MODEL, IMPORTANT_INFO_THRESHOLD, DEFAULT_BASE_URL, PROMPT_TEMPLATES } from "@/lib/config"
+import { DEFAULT_API_KEY, FREE_CONVERSATIONS, DEFAULT_MODEL, IMPORTANT_INFO_THRESHOLD, DEFAULT_BASE_URL } from "@/lib/config"
+import {
+  normalizePromptLocale,
+  getPromptTemplates,
+  getCompressImportantSystemMessage,
+  buildCompressImportantUserContent,
+  type PromptLocale,
+} from "@/lib/prompts"
 import { callAI } from "@/lib/openai"
 import type { ChatRequest, ChatResponse } from "@/lib/types"
 
@@ -17,25 +24,21 @@ async function compressImportantInfo(
   infos: string[],
   apiKey: string,
   model: string,
-  baseURL: string
+  baseURL: string,
+  locale: PromptLocale
 ): Promise<string> {
   if (infos.length < IMPORTANT_INFO_THRESHOLD) {
     return infos.join("; ")
   }
 
-  const compressPrompt = `请把以下用户的重要信息压缩成简洁的摘要（不超过5条）：
-
-${infos.map((info, i) => `${i + 1}. ${info}`).join("\n")}
-
-返回JSON格式：
-{"compressed_summary": "压缩后的摘要（不超过100字）"}`
+  const compressPrompt = buildCompressImportantUserContent(locale, infos)
 
   const openai = new OpenAI({ apiKey, baseURL })
 
   const response = await openai.chat.completions.create({
     model,
     messages: [
-      { role: "system", content: "你是一个信息压缩助手。" },
+      { role: "system", content: getCompressImportantSystemMessage(locale) },
       { role: "user", content: compressPrompt },
     ],
     response_format: { type: "json_object" },
@@ -65,6 +68,8 @@ export async function POST(request: NextRequest) {
   try {
     const body: ChatRequest = await request.json()
     const { message, history, importantInfo, config } = body
+    const locale = normalizePromptLocale(body.locale)
+    const promptTemplates = getPromptTemplates(locale)
 
     if (!message?.trim()) {
       return NextResponse.json(
@@ -108,14 +113,15 @@ export async function POST(request: NextRequest) {
         currentImportantInfo,
         apiKey,
         userModel,
-        baseURL
+        baseURL,
+        locale
       )
       currentImportantInfo = [compressed]
     }
 
     let finalSettings = userSettings
-    if (templateName && PROMPT_TEMPLATES[templateName as keyof typeof PROMPT_TEMPLATES]) {
-      const template = PROMPT_TEMPLATES[templateName as keyof typeof PROMPT_TEMPLATES]
+    if (templateName && promptTemplates[templateName as keyof typeof promptTemplates]) {
+      const template = promptTemplates[templateName as keyof typeof promptTemplates]
       finalSettings = {
         ...userSettings,
         systemPrompt: template.systemPrompt,
@@ -129,7 +135,8 @@ export async function POST(request: NextRequest) {
       apiKey,
       userModel,
       baseURL,
-      finalSettings
+      finalSettings,
+      locale
     )
 
     if (isUsingDefault) {

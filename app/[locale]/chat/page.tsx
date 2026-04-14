@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useRef, useMemo } from "react"
+import { useRouter } from "@/i18n/navigation"
+import { useLocale, useTranslations } from "next-intl"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,9 +14,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { DEFAULT_MODEL, DEFAULT_BASE_URL, PROMPT_TEMPLATES } from "@/lib/config"
+import { DEFAULT_MODEL, DEFAULT_BASE_URL } from "@/lib/config"
+import { getPromptTemplates, normalizePromptLocale } from "@/lib/prompts"
 import { defaultSettings, FREE_CONVERSATIONS_LIMIT } from "@/config/constants"
-import { generateId, formatCountdown } from "@/config/utils"
+import { generateId } from "@/config/utils"
 import { messageSlide } from "@/config/animations"
 import {
   STORAGE_KEY_MESSAGES,
@@ -42,6 +44,20 @@ import { BrandIcon } from "@/components/brand-icon"
 
 export default function ChatPage() {
   const router = useRouter()
+  const uiLocale = normalizePromptLocale(useLocale())
+  const promptTemplates = useMemo(
+    () => getPromptTemplates(uiLocale),
+    [uiLocale]
+  )
+  const t = useTranslations("Chat")
+  const tErr = useTranslations("Chat.errors")
+  const tCommon = useTranslations("common")
+  const formatCd = (seconds: number) => {
+    if (seconds < 60) return t("countdownSeconds", { n: seconds })
+    const m = Math.floor(seconds / 60)
+    const n = seconds % 60
+    return t("countdownMinutes", { m, n })
+  }
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -232,6 +248,7 @@ export default function ChatPage() {
           message: userMessage.content,
           history: messages,
           importantInfo,
+          locale: uiLocale,
           config: config.apiKey || config.model !== DEFAULT_MODEL
             ? { 
                 apiKey: config.apiKey, 
@@ -251,9 +268,9 @@ export default function ChatPage() {
         if (data.error === "FREE_TOKENS_EXHAUSTED") {
           setShowQuotaAlert(true)
           setIsConfigOpen(true)
-          throw new Error("免费额度已用完，请输入自己的 API Key")
+          throw new Error(tErr("freeExhausted"))
         }
-        throw new Error(data.message || "请求失败")
+        throw new Error(data.message || tErr("requestFailed"))
       }
 
       const assistantMessage: ChatMessage = {
@@ -284,7 +301,7 @@ export default function ChatPage() {
         scheduleTrigger(triggerTime, trigger.message)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "未知错误")
+      setError(err instanceof Error ? err.message : tErr("unknown"))
     } finally {
       setIsLoading(false)
     }
@@ -330,7 +347,7 @@ export default function ChatPage() {
 
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplate(templateId)
-    const template = PROMPT_TEMPLATES[templateId as keyof typeof PROMPT_TEMPLATES]
+    const template = promptTemplates[templateId as keyof typeof promptTemplates]
     if (template) {
       setConfig({
         ...config,
@@ -356,13 +373,13 @@ export default function ChatPage() {
               type="button"
               onClick={() => router.push("/")}
               className="p-0 border-0 bg-transparent cursor-pointer leading-none shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              aria-label="返回首页"
+              aria-label={t("backHome")}
             >
-              <BrandIcon size={36} priority />
+              <BrandIcon size={36} priority alt={tCommon("brandAlt")} />
             </button>
-            <span className="text-lg font-bold text-slate-800">Proactive AI</span>
+            <span className="text-lg font-bold text-slate-800">{t("brand")}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-wrap justify-end">
             <AnimatePresence>
               {countdown > 0 && (
                 <motion.div
@@ -372,7 +389,7 @@ export default function ChatPage() {
                 >
                   <Badge variant="outline" className="text-xs gap-1 bg-blue-50 text-blue-600 border-blue-200 items-center">
                     <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse mt-0.5" />
-                    {formatCountdown(countdown)}
+                    {formatCd(countdown)}
                   </Badge>
                 </motion.div>
               )}
@@ -389,17 +406,17 @@ export default function ChatPage() {
                     >
                       <Badge variant="outline" className="text-xs gap-1">
                         <Brain className="w-3 h-3" />
-                        {importantInfo.length} 条记忆
+                        {t("memoryCount", { count: importantInfo.length })}
                       </Badge>
                     </motion.div>
                   </DialogTrigger>
                   <DialogContent className="max-w-lg max-h-[60vh] flex flex-col p-0">
                     <DialogHeader className="px-6 pt-6 pb-2">
-                      <DialogTitle>重要信息记忆</DialogTitle>
+                      <DialogTitle>{t("memoryTitle")}</DialogTitle>
                     </DialogHeader>
                     <div className="flex-1 overflow-y-auto space-y-3 px-6 py-4">
                       {importantInfo.length === 0 ? (
-                        <p className="text-center text-slate-400 text-sm py-8">暂无重要记忆</p>
+                        <p className="text-center text-slate-400 text-sm py-8">{t("memoryEmpty")}</p>
                       ) : (
                         importantInfo.map((info, index) => (
                           <motion.div
@@ -415,7 +432,7 @@ export default function ChatPage() {
                               whileTap={{ scale: 0.9 }}
                               onClick={() => handleDeleteImportantInfo(index)}
                               className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-100 text-red-500 flex-shrink-0"
-                              title="删除"
+                              title={t("deleteTitle")}
                             >
                               <X className="w-4 h-4" />
                             </motion.button>
@@ -432,7 +449,7 @@ export default function ChatPage() {
                           onClick={handleClearImportantInfo}
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          清空所有记忆
+                          {t("clearAllMemory")}
                         </Button>
                       </div>
                     )}
@@ -443,13 +460,16 @@ export default function ChatPage() {
             {mode === "free" && (
               <Badge variant="outline" className="text-xs">
                 {remainingConversations > 0
-                  ? `免费: ${remainingConversations}/${FREE_CONVERSATIONS_LIMIT} 次`
-                  : "额度已用完"}
+                  ? t("freeQuota", {
+                      remaining: remainingConversations,
+                      limit: FREE_CONVERSATIONS_LIMIT,
+                    })
+                  : t("quotaExhausted")}
               </Badge>
             )}
             {mode === "custom" && (
               <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-                自定义模式
+                {t("customMode")}
               </Badge>
             )}
             <Button variant="ghost" size="icon" onClick={handleClear} className="cursor-pointer">
@@ -463,7 +483,7 @@ export default function ChatPage() {
               </DialogTrigger>
               <DialogContent className="max-h-[80vh] overflow-y-auto p-0">
                   <DialogHeader className="px-6 pt-6 pb-2">
-                    <DialogTitle>设置</DialogTitle>
+                    <DialogTitle>{t("settings")}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 px-6 py-4">
                     {showQuotaAlert && (
@@ -474,14 +494,14 @@ export default function ChatPage() {
                       >
                         <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-red-400">
-                          免费额度已用完，请输入自己的 API Key
+                          {t("quotaAlert")}
                         </p>
                       </motion.div>
                     )}
 
                     <div>
                       <label className="text-sm text-slate-400 mb-2 block">
-                        API Base URL
+                        {t("apiBaseUrl")}
                       </label>
                       <Input
                         placeholder="https://api.openai.com/v1"
@@ -494,10 +514,10 @@ export default function ChatPage() {
 
                     <div>
                       <label className="text-sm text-slate-400 mb-2 block">
-                        模型名称
+                        {t("modelName")}
                       </label>
                       <Input
-                        placeholder="deepseek-chat, gpt-4o 等"
+                        placeholder={t("modelPlaceholder")}
                         value={config.model}
                         onChange={(e) =>
                           setConfig({ ...config, model: e.target.value })
@@ -507,7 +527,7 @@ export default function ChatPage() {
 
                     <div>
                       <label className="text-sm text-slate-400 mb-2 block">
-                        API Key {isUsingDefault && "(可选，使用默认)"}
+                        {t("apiKey")} {isUsingDefault && t("apiKeyOptional")}
                       </label>
                       <Input
                         type="password"
@@ -521,7 +541,7 @@ export default function ChatPage() {
 
                     <div className="flex items-center gap-2 text-xs text-slate-500">
                       <KeyRound className="w-3 h-3" />
-                      所有信息仅保存在浏览器本地
+                      {t("localOnly")}
                     </div>
 
                     <div className="border-t border-slate-200 pt-4">
@@ -529,7 +549,7 @@ export default function ChatPage() {
                         onClick={() => setShowAdvanced(!showAdvanced)}
                         className="flex items-center justify-between w-full text-sm text-slate-500 hover:text-slate-900"
                       >
-                        <span>高级配置</span>
+                        <span>{t("advanced")}</span>
                         {showAdvanced ? (
                           <ChevronUp className="w-4 h-4" />
                         ) : (
@@ -547,14 +567,14 @@ export default function ChatPage() {
                           >
                             <div>
                               <label className="text-sm text-slate-400 mb-2 block">
-                                AI 人设模板
+                                {t("personaTemplate")}
                               </label>
                               <select
                                 value={selectedTemplate}
                                 onChange={(e) => handleTemplateChange(e.target.value)}
                                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               >
-                                {Object.entries(PROMPT_TEMPLATES).map(([id, template]) => (
+                                {Object.entries(promptTemplates).map(([id, template]) => (
                                   <option key={id} value={id}>
                                     {template.name} - {template.description}
                                   </option>
@@ -564,7 +584,9 @@ export default function ChatPage() {
 
                             <div>
                               <label className="text-sm text-slate-400 mb-2 block">
-                                重要信息阈值: {config.settings?.importantInfoThreshold || 20}
+                                {t("importantThreshold", {
+                                  value: config.settings?.importantInfoThreshold || 20,
+                                })}
                               </label>
                               <input
                                 type="range"
@@ -577,13 +599,13 @@ export default function ChatPage() {
                                 className="w-full"
                               />
                               <p className="text-xs text-slate-500 mt-1">
-                                超过此数量自动压缩（10-100）
+                                {t("importantThresholdHint")}
                               </p>
                             </div>
 
                             <div>
                               <label className="text-sm text-slate-400 mb-2 block">
-                                预设触发间隔（秒）
+                                {t("proactiveInterval")}
                               </label>
                               <Input
                                 type="number"
@@ -595,13 +617,15 @@ export default function ChatPage() {
                                 }
                               />
                               <p className="text-xs text-slate-500 mt-1">
-                                下次主动触发的间隔（10-300秒）
+                                {t("proactiveIntervalHint")}
                               </p>
                             </div>
 
                             <div>
                               <label className="text-sm text-slate-400 mb-2 block">
-                                分层记忆数量: {config.settings?.recentMessagesCount || 3}
+                                {t("recentMessages", {
+                                  value: config.settings?.recentMessagesCount || 3,
+                                })}
                               </label>
                               <input
                                 type="range"
@@ -614,13 +638,13 @@ export default function ChatPage() {
                                 className="w-full"
                               />
                               <p className="text-xs text-slate-500 mt-1">
-                                最近N条消息保留完整（1-10条）
+                                {t("recentMessagesHint")}
                               </p>
                             </div>
 
                             <div className="flex items-center justify-between">
                               <span className="text-sm text-slate-400">
-                                启用主动触发
+                                {t("proactiveEnabled")}
                               </span>
                               <input
                                 type="checkbox"
@@ -634,18 +658,18 @@ export default function ChatPage() {
 
                             <div>
                               <label className="text-sm text-slate-400 mb-2 block">
-                                系统提示词模板
+                                {t("systemPrompt")}
                               </label>
                               <textarea
                                 className="w-full h-32 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="留空使用默认提示词..."
+                                placeholder={t("systemPromptPlaceholder")}
                                 value={config.settings?.systemPrompt || ""}
                                 onChange={(e) =>
                                   updateSettings("systemPrompt", e.target.value)
                                 }
                               />
                               <p className="text-xs text-slate-500 mt-1">
-                                自定义 AI 的行为指令，留空使用默认
+                                {t("systemPromptHint")}
                               </p>
                             </div>
                           </motion.div>
@@ -654,7 +678,7 @@ export default function ChatPage() {
                     </div>
 
                     <Button className="w-full" onClick={handleConfigSave}>
-                      保存
+                      {t("save")}
                     </Button>
                   </div>
                 </DialogContent>
@@ -681,13 +705,13 @@ export default function ChatPage() {
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                 className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4 p-2"
               >
-                <BrandIcon size={32} />
+                <BrandIcon size={32} alt={tCommon("brandAlt")} />
               </motion.div>
               <h3 className="text-lg font-semibold mb-2 text-slate-800">
-                开始你的主动 AI 对话
+                {t("emptyTitle")}
               </h3>
               <p className="text-sm text-slate-500 max-w-md mx-auto">
-                AI 会主动关心你，记得你的偏好。发送消息开始体验！
+                {t("emptySub")}
               </p>
             </motion.div>
           )}
@@ -708,7 +732,7 @@ export default function ChatPage() {
                     whileHover={{ scale: 1.1 }}
                     className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 p-1"
                   >
-                    <BrandIcon size={16} />
+                    <BrandIcon size={16} alt={tCommon("brandAlt")} />
                   </motion.div>
                 )}
                 <div
@@ -732,7 +756,7 @@ export default function ChatPage() {
                 className="flex gap-3"
               >
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center p-1">
-                  <BrandIcon size={16} />
+                  <BrandIcon size={16} alt={tCommon("brandAlt")} />
                 </div>
                 <div className="bg-slate-100 rounded-2xl px-4 py-3 flex items-center">
                   <div className="flex gap-1 h-2 items-center">
@@ -781,7 +805,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-              placeholder="发送消息..."
+              placeholder={t("inputPlaceholder")}
               disabled={isLoading}
               className="flex-1"
             />

@@ -4,15 +4,17 @@ export function BrandIcon({
   size,
   className = "",
   priority = false,
+  alt = "Proactive AI",
 }: {
   size: number
   className?: string
   priority?: boolean
+  alt?: string
 }) {
   return (
     <Image
       src="/sparkle.png"
-      alt="Proactive AI"
+      alt={alt}
       width={size}
       height={size}
       className={`object-contain ${className}`}

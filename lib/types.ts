@@ -37,6 +37,8 @@ export interface ChatRequest {
   message: string
   history: ChatMessage[]
   importantInfo: string[]
+  /** UI language: selects built-in system prompts (zh | en) */
+  locale?: string
   config?: {
     model?: string
     apiKey?: string
