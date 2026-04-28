@@ -39,13 +39,12 @@ export default function MarketPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const id = window.setTimeout(() => setDebouncedQ(q.trim()), 300)
+    const id = window.setTimeout(() => {
+      setDebouncedQ(q.trim())
+      setPage(1)
+    }, 300)
     return () => window.clearTimeout(id)
   }, [q])
-
-  useEffect(() => {
-    setPage(1)
-  }, [debouncedQ])
 
   useEffect(() => {
     if (!supabase) return

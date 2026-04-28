@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useLocale } from "next-intl"
 import { useParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { ExternalLink, Github, Globe } from "lucide-react"
@@ -42,7 +41,6 @@ function buildTree(rows: DiscussionRow[]): DNode[] {
 export default function PluginDetailPage() {
   const t = useTranslations("Market.detail")
   const tComm = useTranslations("Community")
-  const locale = useLocale()
   const router = useRouter()
   const supabase = useSupabaseBrowser()
   const userId = useCommunityStore((s) => s.userId)

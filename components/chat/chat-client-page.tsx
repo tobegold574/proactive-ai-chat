@@ -4,7 +4,6 @@ import { useRouter } from "@/i18n/navigation"
 import { memo, useCallback, useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTranslations } from "next-intl"
-import { useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -167,7 +166,6 @@ const MessagesPanel = memo(function MessagesPanel({
 
 export default function ChatClientPage() {
   const router = useRouter()
-  const locale = useLocale()
   const t = useTranslations("Chat")
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState("")
@@ -310,7 +308,6 @@ export default function ChatClientPage() {
         localStorage.removeItem(STORAGE_KEY_TRIGGER)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

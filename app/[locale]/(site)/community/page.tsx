@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useLocale } from "next-intl"
 import { useTranslations } from "next-intl"
 import { Search } from "lucide-react"
 import { useRouter } from "@/i18n/navigation"
@@ -17,7 +16,6 @@ type PostWithAuthor = Post & { profiles: Pick<Profile, "username"> | null }
 
 export default function CommunityPage() {
   const t = useTranslations("Community")
-  const locale = useLocale()
   const router = useRouter()
   const supabase = useSupabaseBrowser()
   const userId = useCommunityStore((s) => s.userId)
