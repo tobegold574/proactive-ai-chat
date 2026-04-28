@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next"
 import { routing } from "@/i18n/routing"
 import { getSiteOrigin } from "@/lib/site-url"
 
+/** 构建期/边缘缓存友好，避免动态标记导致抓取方拿到不稳定响应 */
+export const dynamic = "force-static"
+
 /** Public routes under `[locale]/(site)` and `(chat)` — no dynamic `[id]` URLs here. */
 const STATIC_PATHS: { path: string; changeFrequency: MetadataRoute.Sitemap[0]["changeFrequency"]; priority: number }[] =
   [

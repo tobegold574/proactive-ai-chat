@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useLocale } from "next-intl"
 import { useParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useRouter } from "@/i18n/navigation"
@@ -40,7 +39,6 @@ function buildTree(comments: CommentRow[]): TreeNode[] {
 export default function PostDetailPage() {
   const t = useTranslations("Community.thread")
   const tCommon = useTranslations("Community")
-  const locale = useLocale()
   const router = useRouter()
   const supabase = useSupabaseBrowser()
   const userId = useCommunityStore((s) => s.userId)
